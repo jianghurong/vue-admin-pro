@@ -29,6 +29,19 @@ const router = createRouter({
                             component: () => import('@/views/form/BasicForm')
                         }
                     ]
+                },
+                {
+                    path: '/editor',
+                    name: 'editor',
+                    component: () => import('@/layouts/RouterLayout'),
+                    children: [
+                        {
+                            path: '/editor/create',
+                            name: 'editorCreate',
+                            meta: { title: '富文本' },
+                            component: () => import('@/views/editor/Create')
+                        }
+                    ]
                 }
             ]
         },
