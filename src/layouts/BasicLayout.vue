@@ -1,10 +1,25 @@
 <template>
   <a-layout>
     <a-layout-sider>
-      <a-menu theme="dark">
-        <a-menu-item v-for="menu in menus" :key="menu.name" @click="toPath(menu.path)">
-          <span>{{ menu.meta.title }}</span>
-        </a-menu-item>
+      <a-menu mode="inline" theme="dark">
+        <div v-for="menu in menuList" :key="menu.name">
+          <a-sub-menu
+            v-if="menu.children"
+          >
+            <template #title>
+              <span>{{ menu.meta.title }}</span>
+            </template>
+            <a-menu-item v-for="subMenu in menu.children" :key="subMenu.name">
+              <router-link :to="subMenu.path">{{ subMenu.meta.title }}</router-link>
+            </a-menu-item>
+          </a-sub-menu>
+          <a-menu-item
+            v-else
+          >
+<!--            <a-icon icon="menu.meta.icon"></a-icon>-->
+            <router-link :to="menu.path">{{ menu.meta.title }}</router-link>
+          </a-menu-item>
+        </div>
       </a-menu>
     </a-layout-sider>
     <a-layout-content>
@@ -14,19 +29,27 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router'
+/* eslint-disable*/
+import { h } from 'vue'
+import menus from '@/router/menus'
 
 export default {
   name: 'BasicLayout',
+  // components: {
+  //   'a-icon': {
+  //     prop: {
+  //       icon: String
+  //     },
+  //     render(h) {
+  //       console.log(this.icon)
+  //       return h(this.icon, {})
+  //     }
+  //   }
+  // },
   setup() {
-    const router = useRouter()
-    const menus = router.getRoutes()
-    const toPath = (path) => {
-      router.push(path)
-    }
+    const menuList = menus.find(ele => ele.path === '/').children || []
     return {
-      menus,
-      toPath
+      menuList
     }
   }
 }
