@@ -4,6 +4,8 @@
 
 <script>
 export default {
-  name: 'Dash'
+  name: 'Dash',
+  setup() {
+  }
 }
 </script>

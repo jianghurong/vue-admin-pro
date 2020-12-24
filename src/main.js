@@ -4,6 +4,9 @@ import App from '@/App.vue'
 // 引入路由文件
 import router from '@/router'
 
+// 引入Mock
+import '@/mock'
+
 import {
   Button,
   Row,
@@ -11,7 +14,8 @@ import {
   Form,
   Input,
   Layout,
-  Menu
+  Menu,
+  Select
 } from 'ant-design-vue'
 
 const app = createApp(App)
@@ -24,5 +28,6 @@ app.use(router)
   .use(Input)
   .use(Layout)
   .use(Menu)
+  .use(Select)
 
 app.mount('#app')
