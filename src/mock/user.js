@@ -1,7 +1,8 @@
-import Mock from 'mock'
+import Mock from 'mockjs'
 
 Mock.mock(/\/user/, 'get', {
-  'userinfo': {
-
+  'userInfo': {
+    'name': 'Answer',
+    'description': 'You can be better .',
   }
 })

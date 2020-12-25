@@ -18,7 +18,10 @@ import {
   Layout,
   Menu,
   Select,
-  Breadcrumb
+  Breadcrumb,
+  Card,
+  Avatar,
+  Drawer
 } from 'ant-design-vue'
 
 const app = createApp(App)
@@ -33,9 +36,10 @@ app.use(router)
   .use(Menu)
   .use(Select)
   .use(Breadcrumb)
+  .use(Card)
+  .use(Avatar)
+  .use(Drawer)
 
-// vue2 vue.prototype.$https = () => {}
-// vue3
 app.config.globalProperties.$axios = axios
 
 app.mount('#app')

@@ -16,7 +16,6 @@
           <a-menu-item
             v-else
           >
-<!--            <a-icon icon="menu.meta.icon"></a-icon>-->
             <router-link :to="menu.path">{{ menu.meta.title }}</router-link>
           </a-menu-item>
         </div>
@@ -24,13 +23,14 @@
     </a-layout-sider>
     <a-layout-content>
       <a-breadcrumb>
-        <a-breadcrumb-item
-          v-for="bread in breadcrumbList"
-          :key="bread.path"
-          :href="bread.path"
-        >
-          <router-link :to="bread.path">
-            {{ bread.name }}
+        <a-breadcrumb-item>
+          <router-link to="/">
+            首页
+          </router-link>
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>
+          <router-link :to="route.path">
+            {{ route.meta.title }}
           </router-link>
         </a-breadcrumb-item>
       </a-breadcrumb>
@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import { ref, onUpdated } from 'vue'
 import { useRoute } from 'vue-router'
 import menus from '@/router/menus'
 
@@ -49,45 +48,9 @@ export default {
   setup() {
     const route = useRoute()
     const menuList = menus.find(ele => ele.path === '/').children || []
-    const breadcrumbList = ref([])
-    // 获取面包屑列表
-    const getBreadcrumbList = () => {
-      let home = [
-        {
-          path: '/',
-          name: '主页'
-        }
-      ]
-      for (let i = 0 ; i < menuList.length; i++) {
-        if (menuList[i].path === route.path) {
-          breadcrumbList.value = home.concat([{
-            path: route.path,
-            name: route.meta.title
-          }])
-        }
-        if (menuList[i].children) {
-          let current = menuList[i].children.filter(ele => ele.path === route.path)
-          if (current.length > 0) {
-            breadcrumbList.value = home.concat([
-              {
-                path: menuList[i].path,
-                name: menuList[i].meta.title
-              },
-              {
-              path: route.path,
-              name: route.meta.title
-            }])
-          }
-        }
-      }
-    }
-    getBreadcrumbList()
-    onUpdated(() => {
-      getBreadcrumbList()
-    })
     return {
       menuList,
-      breadcrumbList
+      route
     }
   }
 }
