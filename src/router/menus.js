@@ -50,6 +50,22 @@ const menus = [
             component: () => import('@/views/editor/Create')
           }
         ]
+      },
+      {
+        path: '/user',
+        name: 'user',
+        component: RouterLayout,
+        meta: {
+          title: '个人中心模块'
+        },
+        children: [
+          {
+            path: '/user/detail',
+            name: 'userDetail',
+            meta: { title: '个人中心'},
+            component: () => import('@/views/user/detail')
+          }
+        ]
       }
     ]
   },

@@ -11,3 +11,17 @@
     </a-form-item>
   </a-form>
 </template>
+
+<script>
+import axios from 'axios'
+
+export default {
+  name: 'BasicForm',
+  setup() {
+    axios.get('/meta/department')
+      .then(res => {
+        console.log(res)
+      })
+  }
+}
+</script>
