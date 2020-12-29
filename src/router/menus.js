@@ -17,7 +17,7 @@ const menus = [
         path: '/dash',
         name: 'dash',
         meta: { title: '导航模块', icon: MenuOutlined },
-        component: () => import('@/views/Dash')
+        component: () => import('@/views/dashboard/Statistics')
       },
       {
         path: '/form',
@@ -28,7 +28,7 @@ const menus = [
         },
         children: [
           {
-            path: '/basic/form',
+            path: '/form/basic',
             name: 'basicForm',
             meta: { title: '基础表单' },
             component: () => import('@/views/form/BasicForm')

@@ -2,7 +2,7 @@
  * @Author: Richard Chiang
  * @Date: 2020-12-28 09:52:58
  * @LastEditor: Richard Chiang
- * @LastEditTime: 2020-12-28 17:28:45
+ * @LastEditTime: 2020-12-29 17:24:20
  * @Email: 19875991227@163.com
  * @Description: 
 -->
@@ -21,8 +21,8 @@
                 背景图
             </h3>
             <ul class="vue-admin-setting-sidebar-images">
-                <li v-for="image in 4" :key="image" @click="handleSidebarImage(image)">
-                    <img :src="require(`@/assets/images/sidebar-` + image + '.jpg')">
+                <li v-for="image in 4" :key="image" @click="handleSidebarImage(image)" :class="image == activeSiderImage ? 'active' : null">
+                    <img :src="`/static/images/sidebar-` + image + '.jpg'">
                 </li>
             </ul>
         </a-drawer>
@@ -47,10 +47,11 @@ export default {
     },
     emits: ['backgroundChange'],
     methods: {
-      handleSidebarImage(imageIndex) {
-        this.$emit('backgroundChange', imageIndex)
-        localStorage.setItem('sidebar-image', imageIndex)
-      }
+        handleSidebarImage(imageIndex) {
+            this.$emit('backgroundChange', imageIndex)
+            localStorage.setItem('sidebar-image', imageIndex)
+            this.activeSiderImage = imageIndex
+        }
     },
     setup() {
         const visible = ref(false)
@@ -60,10 +61,12 @@ export default {
         const onClose = () => {
             visible.value = false
         }
+        const activeSiderImage = localStorage.getItem('sidebar-image')
         return {
             visible,
             toggleVisible,
-            onClose
+            onClose,
+            activeSiderImage
         }
     }
 }
@@ -88,6 +91,9 @@ export default {
             }
         }
         li:hover {
+            border: 2px solid #1890ff;
+        }
+        .active {
             border: 2px solid #1890ff;
         }
     }

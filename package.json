@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^5.1.8",
+    "@antv/g2plot": "^2.3.5",
     "ant-design-vue": "2.0.0-rc.5",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
@@ -35,13 +36,20 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/vue3-essential",
+      "plugin:vue/essential",
       "eslint:recommended"
     ],
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "vue/no-multiple-template-root": "off",
+      "vue/html-indent": [
+        "warn",
+        4
+      ],
+      "vue/no-v-model-argument": "off"
+    }
   },
   "browserslist": [
     "> 1%",

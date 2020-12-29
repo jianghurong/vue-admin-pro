@@ -21,7 +21,8 @@ import {
   Breadcrumb,
   Card,
   Avatar,
-  Drawer
+  Drawer,
+  Tooltip
 } from 'ant-design-vue'
 
 const app = createApp(App)
@@ -39,6 +40,7 @@ app.use(router)
   .use(Card)
   .use(Avatar)
   .use(Drawer)
+  .use(Tooltip)
 
 app.config.globalProperties.$axios = axios
 
