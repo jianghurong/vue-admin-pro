@@ -1,5 +1,6 @@
 <template>
     <div style="padding: 40px">
+        <!-- @todo 登录验证 拖动 -->
         <a-row type="flex" justify="center">
             <a-col :xs="24" :sm="24" :md="12" :lg="6">
                 <a-form
@@ -20,6 +21,9 @@
                         />
                     </a-form-item>
                     <a-form-item>
+                        <auth-card></auth-card>
+                    </a-form-item>
+                    <a-form-item>
                         <a-button
                             type="primary"
                             @click="login"
@@ -35,12 +39,16 @@
 </template>
 
 <script>
-import { ref, reactive } from "vue";
-import { useRouter } from "vue-router";
-import { message } from "ant-design-vue";
+import { ref, reactive } from "vue"
+import { useRouter } from "vue-router"
+import { message } from "ant-design-vue"
+import { AuthCard } from '@/components'
 
 export default {
     name: "Login",
+    components: {
+        AuthCard
+    },
     setup() {
         const router = useRouter();
         const loading = ref(false);
