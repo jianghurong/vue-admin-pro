@@ -21,7 +21,10 @@
                         />
                     </a-form-item>
                     <a-form-item>
-                        <auth-card></auth-card>
+                        <auth-card
+                            :width="300"
+                            :height="150"
+                        ></auth-card>
                     </a-form-item>
                     <a-form-item>
                         <a-button
