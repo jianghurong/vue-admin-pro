@@ -22,8 +22,8 @@
                     </a-form-item>
                     <a-form-item>
                         <auth-card
-                            :width="300"
-                            :height="150"
+                            width="438"
+                            height="300"
                         ></auth-card>
                     </a-form-item>
                     <a-form-item>

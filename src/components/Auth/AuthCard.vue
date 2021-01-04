@@ -2,21 +2,22 @@
  * @Author: Richard Chiang
  * @Date: 2020-12-30 17:54:55
  * @LastEditor: Richard Chiang
- * @LastEditTime: 2020-12-31 18:00:47
+ * @LastEditTime: 2021-01-04 18:10:31
  * @Email: 19875991227@163.com
  * @Description: 
 -->
 <template>
     <div
         class="auth-card"
-        :style="{ width: width + 'px',height: height + 'px' }"
+        :style="{ width: width,height: height}"
     >
         <div class="auth-card-container">
             <div class="auth-card-inner">
                 <div class="auth-card-image-container">
-                    <div class="auth-card-image-block"></div>
-                    <div class="auth-card-image-clip"></div>
-                    <img class="auth-card-image" src="/static/images/sidebar-1.jpg" alt="验证图片1" />
+                    <RedoOutlined class="auth-card-redo" @click="handleNext" />
+                    <div ref="imageBlock" class="auth-card-image-block"></div>
+                    <div ref="imageClip" class="auth-card-image-clip"></div>
+                    <img class="auth-card-image" :src='`/static/images/validate/${image.active}.jpg`' :alt="`验证图片${image.active}`" />
                 </div>
                 <div class="auth-card-slide-container" @mousemove="slideMove" @mouseup="slideEnd" @mouseleave="slideEnd">
                     <div class="auth-card-slide" ref="slide" @mousedown="slideStart">
@@ -30,19 +31,13 @@
 </template>
 
 <script>
-import { nextTick } from 'vue'
-import { ArrowRightOutlined } from '@ant-design/icons-vue'
+import { reactive, ref, nextTick } from 'vue'
+import { RedoOutlined, ArrowRightOutlined } from '@ant-design/icons-vue'
 
 export default {
     name: 'AuthCard',
     data() {
         return {
-            image: {
-                pos: {
-                    x: 50,
-                    y: 50
-                }
-            },
             slide: {
                 width: '',
                 active: false,
@@ -51,26 +46,31 @@ export default {
             }
         }
     },
-    prop: {
+    props: {
         width: {
             type: String,
-            default: 300
+            default: '300'
         },
         height: {
             type: String,
-            default: 200
+            default: '300'
         }
     },
     components: {
+        RedoOutlined,
         ArrowRightOutlined
     },
     methods: {
+        // 更换背景图
+        handleNext() {
+            this.image.active = this.image.active >= 5 ? 1 : ++this.image.active
+            this.init()
+        },
         slideStart(e) {
             e.preventDefault()
             this.slide.startX = e.clientX
             this.slide.active = true
             this.slide.width = document.getElementsByClassName('auth-card-slide-container')[0].offsetWidth
-            console.log(this.slide.width)
         },
         slideMove(e) {
             if (this.slide.active) {
@@ -79,22 +79,75 @@ export default {
                 if (this.slide.diffX > this.slide.width) this.slide.diffX = this.slide.width
                 this.$refs.slide.style.left = `${this.slide.diffX}px`
                 this.$refs.slide.style.transition = ''
+                this.$refs.imageClip.style.left = `${this.slide.diffX}px`
             }
         },
         slideEnd() {
-            this.$refs.slide.style.left = '0px'
-            this.$refs.slide.style.transition = 'left 0.5s ease-in'
-            this.slide.active = false
+            if (this.slide.active) {
+                // 判断是否验证通过(偏移量大致相等)
+                let res = this.isAlmostEqual(this.$refs.imageClip.style.left, getComputedStyle(this.$refs.imageBlock).left)
+                res ? this.validateSuccess() : this.validateFailed()
+                this.$refs.slide.style.left = '0px'
+                this.$refs.slide.style.transition = 'left 0.5s ease-in'
+                this.slide.active = false
+            }
+        },
+        validateSuccess() {
+            this.handleNext()
+            alert('验证通过')
+        },
+        validateFailed() {
+            this.handleNext()
+            alert('验证失败')
+        },
+        isAlmostEqual(cLeft, bLeft) {
+            cLeft = cLeft.substr(0, cLeft.length - 2)
+            bLeft = bLeft.substr(0, bLeft.length - 2)
+            return cLeft <= bLeft + this.image.maxDiff && cLeft >= bLeft - this.image.maxDiff
         }
     },
-    setup() {
-        nextTick(() => {
-            let clip = document.getElementsByClassName('auth-card-image-clip')[0]
-            console.log(clip.style)
-            clip.style.backgroundImage = 'url(/static/images/sidebar-1.jpg)'
-            clip.style.backgroundPosition = '-200px -200px'
-            // @todo 准确匹配切片图片
+    setup(props) {
+        const image = reactive({
+            active: 1,
+            count: 5,
+            maxDiff: 5,
+            pos: {
+                x: 0,
+                y: 0
+            }
         })
+        let imageBlock = ref('')
+        let imageBackground = ref('')
+        let imageClip = ref('')
+        nextTick(() => {
+            imageBlock = document.getElementsByClassName('auth-card-image-block')[0]
+            imageBackground = document.getElementsByClassName('auth-card-image')[0]
+            imageClip = document.getElementsByClassName('auth-card-image-clip')[0]
+        })
+        const init = () => {
+            nextTick(() => {
+                setRandomPosition()
+                imageClip.style.backgroundImage = `url(/static/images/validate/${image.active}.jpg)`
+                console.log(image.pos.x, image.pos.y)
+                imageClip.style.backgroundPosition = `${image.pos.x}px ${image.pos.y}px`
+                imageClip.style.top = image.pos.y + 'px'  
+                imageClip.style.left = '10px'
+                imageClip.style.backgroundSize = `${imageBackground.naturalWidth}px ${imageBackground.naturalHeight}px` // 这里很重要，这个尺寸等于原图片大小，保证准确匹配切片图片
+                imageBlock.style.left = image.pos.x + 'px'
+                imageBlock.style.top = image.pos.y + 'px' 
+            })
+        }
+        // 生成随机位置
+        const setRandomPosition = () => {
+            image.pos.x = Math.floor(Math.random() *  (props.width - 150) + 101)
+            image.pos.y = Math.floor(Math.random() *  (props.height - 100) + 50)
+        }
+        init()
+        return {
+            image,
+            init,
+            setRandomPosition
+        }
     }
 }
 </script>
@@ -115,25 +168,42 @@ export default {
         width: 100%;
         height: 300px;
         margin-bottom: 20px;
+        .auth-card-redo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+            opacity: 0.5;
+            z-index: 2;
+        }
+        .auth-card-redo:hover {
+            opacity: 1;
+        }
         .auth-card-image-block {
             position: absolute;
-            top: 200px;
-            left: 200px;
+            // top: 200px;
+            // left: 200px;
             width: 50px;
             height: 50px;
-            background: #fff;
-            opacity: 1;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5) inset;
+            border-radius: 5px;
         }
         .auth-card-image {
             width: 100%;
-            height: 300px;
+            height: 100%;
+            object-fit: fill;
         }
         .auth-card-image-clip {
             position: absolute;
-            top: 0;
-            left: 0;
+            // top: 0;
+            // left: 10px;
             width: 50px;
             height: 50px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5) outset;
         }
     }
     .auth-card-slide-container {
@@ -161,7 +231,7 @@ export default {
             font-size: 18px;
             cursor: pointer;
             transition: background 0.2s ease-in;
-            z-index: 2;
+            z-index: 3;
             &:hover {
                 background: #096dd9;
                 color: #fff;
